@@ -1,7 +1,7 @@
 <?php
-echo var_dump($_POST);
-
-/*
+	echo var_dump($_POST);
+	
+	/*
 	// Connect to DB
 	$mysqli_connection = new MySQLi('localhost', 'peterb22_itemGen', 'bD2g^gS^S!BQ', 'peterb22_itemGenerator');
 	// Check the connection
@@ -19,5 +19,5 @@ echo var_dump($_POST);
 	  }
 	mysqli_close($mysqli_connection);
 	print($_REQUEST["data"]);
-*/
+	*/
 ?>

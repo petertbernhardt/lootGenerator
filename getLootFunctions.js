@@ -33,7 +33,7 @@ function removeMember() { // Removes a "character" line to the form. Won't remov
 }
 
 function resetForm() { // Resets the form.
-	document.getElementById('lootForm').reset();
+	document.getElementById('results').innerHTML = "";
 }
 
 function create(htmlStr) {
@@ -74,7 +74,9 @@ function fetch() {
 
 function populate(ajax) {
 	var data = ajax.responseText;
-	alert(data);
+	//alert(data);
+	var output = create('<p>'+data+'</p>');
+	document.getElementById("results").appendChild(output);
 }
 
 // ==== Failure and exception handling functions ====
