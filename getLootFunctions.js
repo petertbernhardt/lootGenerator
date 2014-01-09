@@ -9,7 +9,7 @@ $(document).observe('dom:loaded', function() {
 	$('lootForm').observe('submit', fetch);
 });
 
-function addMember() { // Adds a "character" line to the form. Yeah, I know that line is long, sorry.
+function addMember() { // Adds a "character" line to the form. Yeah, I know that block is long, sorry.
 	if (curMembers > 0 && curMembers < 12) { // Won't add more than 12 members (because c'mon, right?)
 		curMembers = curMembers + 1;
 		var fragment = create('<p> Race <select type="text" name="race' + curMembers 
@@ -21,14 +21,15 @@ function addMember() { // Adds a "character" line to the form. Yeah, I know that
 			+ '"><option value="lasers">Lasers</option><option value="axe">Axe</option></select> Preferred Armor Type <select type="text" name="prefArm' + curMembers 
 			+ '" id="prefArm' + curMembers 
 			+ '"><option value="fat">Fat</option><option value="cloth"> Cloth </option></select></p>');
-		document.getElementById("chars").insertBefore(fragment, document.getElementById("more_less"));
+		document.getElementById("chars").appendChild(fragment);
 	}
 }
 
 function removeMember() { // Removes a "character" line to the form. Won't remove the last one.
 	if (curMembers > 1 && curMembers <= 12) {
 		curMembers = curMembers - 1;
-		document.getElementById("chars").removeChild(document.getElementById("more_less").previousSibling);
+		var charDiv = document.getElementById("chars");
+		charDiv.removeChild(charDiv.childNodes[charDiv.childNodes.length - 1]);
 	} 
 }
 
@@ -36,6 +37,7 @@ function resetForm() { // Resets the form.
 	document.getElementById('results').innerHTML = "";
 }
 
+// Returns a block of (essentially) parsed HTML.
 function create(htmlStr) {
     var frag = document.createDocumentFragment(),
         temp = document.createElement('p');
@@ -48,31 +50,14 @@ function create(htmlStr) {
 
 // ==== AJAX functions and data handling ====
 
-/*function fetch() { // Submits the form to the PHP webservice.
-	alert("fetch function called");
-	// Get everything from the form.
-	var input = ["data1"]; // HOW DO I DO THIS!?!??!?!??!?!?!
-	// Send it to the web service.
-	new Ajax.Request(WEB_SERVICE,
-    {
-		method: "post",
-		parameters: {data: input},
-		onSuccess: populate,
-		onFailure: ajaxFailure,
-		onException: ajaxException
-    }
-	);
-}
-*/
-
-function fetch() {
-	$('lootForm').request({
+function fetch() { // Submits the form to the web service LIKE A BOSS.
+	$('lootForm').request({ // The web service address is hooked into the HTML form.
 		onComplete: populate
 	});
 }
 
 
-function populate(ajax) {
+function populate(ajax) { // Handle data sent back from web service.
 	var data = ajax.responseText;
 	//alert(data);
 	var output = create('<p>'+data+'</p>');
@@ -82,7 +67,7 @@ function populate(ajax) {
 // ==== Failure and exception handling functions ====
 
 
-// displays an error message if the server responds with anything other than 200 OK
+// Displays an error message if the server responds with anything other than 200 OK
 function ajaxFailure(ajax) {
 	alert("Server returned an HTTP error status code in response to an Ajax request!\n\n" +
 	      "Status code: " + ajax.status + "\n" +
