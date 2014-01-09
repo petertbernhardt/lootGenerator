@@ -1,15 +1,39 @@
+var curMembers = 1; // Global to keep track of members.
+var WEB_SERVICE = 'LootGet.php';
+
+// ==== Buttons and functionality ====
+
 // When the page has finished loading, attach various event handlers.
-window.onload = function () {
-	// alert("js works");
+$(document).observe('dom:loaded', function() {
+	// Observe the 'submit' event on the form.
+	$('lootForm').observe('submit', fetch);
+});
+
+function addMember() { // Adds a "character" line to the form. Yeah, I know that line is long, sorry.
+	if (curMembers > 0 && curMembers < 12) { // Won't add more than 12 members (because c'mon, right?)
+		curMembers = curMembers + 1;
+		var fragment = create('<p> Race <select type="text" name="race' + curMembers 
+			+ '" id="race' + curMembers 
+			+ '"><option value="dragonborn">Dragonborn</option><option value="human">Human</option></select> Class <select type="text" name="class' + curMembers 
+			+ '" id="class' + curMembers 
+			+ '"><option value="jumper">Jumper</option><option value="tardbarian">Tardbarian</option></select>Preferred Weapon Type<select type="text" name="prefWep' + curMembers 
+			+ '" id="prefWep ' + curMembers 
+			+ '"><option value="lasers">Lasers</option><option value="axe">Axe</option></select> Preferred Armor Type <select type="text" name="prefArm' + curMembers 
+			+ '" id="prefArm' + curMembers 
+			+ '"><option value="fat">Fat</option><option value="cloth"> Cloth </option></select></p>');
+		document.getElementById("chars").insertBefore(fragment, document.getElementById("more_less"));
+	}
 }
 
-function addMember() {
-	var fragment = create('<p>Race <select><option value="party1">Dragonborn</option><option value="party2">Human</option><option value="party3">Elf</option><option value="party4">Shark</option><option value="party5">Balloon</option><option value="party6">Pokemon</option><option value="party7">Fuck</option><option value="party8">etc...</option></select>	Class <select><option value="party1">Jumper</option><option value="party2">Tardbarian</option><option value="party3">Peter</option><option value="party4">Is</option><option value="party5">A</option><option value="party6">Failure</option><option value="party7">LOL</option><option value="party8">etc...</option></select> Preferred Weapon Type <select><option value="party1">Lasers</option><option value="party2">Axe</option><option value="party3">Sword</option><option value="party4">Genitalia</option><option value="party5">Butts</option><option value="party6">Flail</option><option value="party7">Hammer</option><option value="party8">etc...</option></select> Preferred Armor Type <select><option value="party1">Fat</option><option value="party2">Cloth</option><option value="party3">Leather</option><option value="party4">Hide</option><option value="party5">Scale</option<option value="party6">Plate</option><option value="party7">Chainmail</option><option value="party8">etc...</option></p>');
-	document.getElementById("chars").insertBefore(fragment, document.getElementById("more_less"));
+function removeMember() { // Removes a "character" line to the form. Won't remove the last one.
+	if (curMembers > 1 && curMembers <= 12) {
+		curMembers = curMembers - 1;
+		document.getElementById("chars").removeChild(document.getElementById("more_less").previousSibling);
+	} 
 }
 
-function removeMember() {
-	document.getElementById("chars").removeChild(document.getElementById("more_less").previousSibling);
+function resetForm() { // Resets the form.
+	document.getElementById('lootForm').reset();
 }
 
 function create(htmlStr) {
@@ -20,4 +44,54 @@ function create(htmlStr) {
         frag.appendChild(temp.firstChild);
     }
     return frag;
+}
+
+// ==== AJAX functions and data handling ====
+
+/*function fetch() { // Submits the form to the PHP webservice.
+	alert("fetch function called");
+	// Get everything from the form.
+	var input = ["data1"]; // HOW DO I DO THIS!?!??!?!??!?!?!
+	// Send it to the web service.
+	new Ajax.Request(WEB_SERVICE,
+    {
+		method: "post",
+		parameters: {data: input},
+		onSuccess: populate,
+		onFailure: ajaxFailure,
+		onException: ajaxException
+    }
+	);
+}
+*/
+
+function fetch() {
+	$('lootForm').request({
+		onComplete: populate
+	});
+}
+
+
+function populate(ajax) {
+	var data = ajax.responseText;
+	alert(data);
+}
+
+// ==== Failure and exception handling functions ====
+
+
+// displays an error message if the server responds with anything other than 200 OK
+function ajaxFailure(ajax) {
+	alert("Server returned an HTTP error status code in response to an Ajax request!\n\n" +
+	      "Status code: " + ajax.status + "\n" +
+	      "Status text: " + ajax.statusText + "\n\n" +
+	      "Content of response:\n\n" + ajax.responseText);
+}
+
+// ensures an error is shown if there is an exception
+function ajaxException(ajax, exception) {
+	if (debug) {
+		alert("Exception in attempting to make Ajax request:\n\n" + exception);
+	}
+	throw exception;
 }
