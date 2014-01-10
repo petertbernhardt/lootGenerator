@@ -25,7 +25,7 @@ function addMember() { // Adds a "character" line to the form. Yeah, I know that
 	}
 }
 
-function removeMember() { // Removes a "character" line to the form. Won't remove the last one.
+function removeMember() { // Removes a "character" line from the form. Won't remove the last one.
 	if (curMembers > 1 && curMembers <= 12) {
 		curMembers = curMembers - 1;
 		var charDiv = document.getElementById("chars");
@@ -33,7 +33,7 @@ function removeMember() { // Removes a "character" line to the form. Won't remov
 	} 
 }
 
-function resetForm() { // Resets the form.
+function resetForm() { // Resets the results div.
 	document.getElementById('results').innerHTML = "";
 }
 
